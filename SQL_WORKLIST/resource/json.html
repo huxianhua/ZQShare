@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>json</title>
+</head>
+<body>
+<h3>1，返回错误的信息</h3>
+<pre>
+{
+    "rec":"400"
+} 
+</pre>
+<h3>2，返回成功的信息</h3>  
+<pre>
+{
+    "rec":"200",
+    "worklist":[
+        {
+            "PatientID":"12012242231", //患者编号
+            "Name":"张1三", //姓名
+            "Gender":"F", //性别 
+            "Age":"7", //年龄
+            "AgeUnit":"M", //年龄 单位Y/M/D
+            "Birth":"2010-10-02", //出生日期 格式yyyy-MM-dd
+            "Weight":"65", //体重 单位：kg
+            "Height":"172", //身高 单位：mm
+            "HN":"212112", //住院号
+            "WN":"121212", //病房号
+            "RN":"12012242231", //预约号
+            "Departments":"胸外科", //门诊
+            "bedNum":"N105", //床号
+            "DOCTOR":"李四3", //医师
+            "DOCTOR_REQUEST":"王五3", //送检医生
+            "DOCTOR_DIAGNOSIS":"赵三3", //诊断医生
+			"RACE":"U", //种族 C  白人 N 非洲 M 东方 O 其他 U未知
+            "Drug1":"7", //用药1 1没有用药 2未知药物 3洋地黄 4利尿剂 5β-受体阻滞药 6喹哪啶 7普鲁卡因 8胺碘达隆 9达舒平 10利诺卡因 11其他抗心律失常药 12作用于精神的药物 13类固醇 14其他药 (0)未定义
+            "Drug2":"8", //用药2 1没有用药 2未知药物 3洋地黄 4利尿剂 5β-受体阻滞药 6喹哪啶 7普鲁卡因 8胺碘达隆 9达舒平 10利诺卡因 11其他抗心律失常药 12作用于精神的药物 13类固醇 14其他药 (0)未定义
+            "Diagnosis1":"13", //先前诊断1 10正常 11心肌梗死 12心肌缺血 13高血压 15先天性心脏病 17心脏瓣膜病 30心包炎 31呼吸道疾病 33内分泌病 46植入起搏器 47肺栓塞 49术后改变 50其他 51心肌病 52未知 (0)未定义
+            "Diagnosis2":"33", //先前诊断2 10正常 11心肌梗死 12心肌缺血 13高血压 15先天性心脏病 17心脏瓣膜病 30心包炎 31呼吸道疾病 33内分泌病 46植入起搏器 47肺栓塞 49术后改变 50其他 51心肌病 52未知 (0)未定义
+			"Customize":"其他", //自定义
+            "CheckItem":"心脏", //检查项
+            "SoureType":"his", //数据来源
+            "state":"0" //患者状态 0未诊断 1已诊断
+        },
+    ]
+}
+
+
+</pre>
+
+  <script>
+
+  </script>
+</body>
+</html>
