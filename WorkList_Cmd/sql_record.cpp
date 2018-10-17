@@ -99,7 +99,7 @@ QString SQL_RECORD::runSQL()
         LOG_DEBUG("log:%s",qUtf8Printable(log));
 
 
-        m_db = QSqlDatabase::addDatabase(m_driverName);
+        m_db = QSqlDatabase::addDatabase(m_driverName,m_driverName);
         m_db.setHostName(hostname);
         m_db.setPort(port);
         m_db.setDatabaseName(sid);
@@ -113,11 +113,13 @@ QString SQL_RECORD::runSQL()
             LOG_DEBUG("%s is open",qUtf8Printable(m_driverName));
             if(0 == m_driverName.compare("QMYSQL",Qt::CaseInsensitive))
             {
+                LOG_DEBUG("user %s",qUtf8Printable(sid));
+
                 QSqlQuery query(this->m_db);
-                QString exe_cmd = QString("use %1;").arg(sql);
+                QString exe_cmd = QString("use %1;").arg(sid);
                 if(!query.exec(exe_cmd) )
                 {
-                    LOG_FATAL("警告-mysql  执行 use %s; 异常!",sql.toUtf8().data());
+                    LOG_FATAL("警告-mysql  执行 use %s; 异常!",sid.toUtf8().data());
                 }
 
             }
@@ -125,9 +127,7 @@ QString SQL_RECORD::runSQL()
             m_json = json;
         }else
         {
-            //QSqlError error = m_db.lastError();
-
-            LOG_DEBUG("%s is no open",qUtf8Printable(m_driverName),qUtf8Printable(m_db.lastError().text()));
+            LOG_DEBUG("%s is no open, (%s)",qUtf8Printable(m_driverName),qUtf8Printable(m_db.lastError().text()));
         }
     }
     return json;
@@ -135,7 +135,14 @@ QString SQL_RECORD::runSQL()
 
 void SQL_RECORD::removeDatabase()
 {
-    QSqlDatabase::removeDatabase(QSqlDatabase::database().connectionName());
+        QString connection;
+
+        connection = m_db.connectionName();
+        m_db.close();
+        m_db = QSqlDatabase();
+
+        QSqlDatabase::removeDatabase(connection);
+
 }
 
 
@@ -178,13 +185,15 @@ void SQL_RECORD::saveResult(QString path)
     }
     QFile outfile( savepath );
 
-    if(!outfile.open(QIODevice::ReadWrite | QIODevice::Text))
+    if(outfile.open(QIODevice::ReadWrite | QIODevice::Text))
     {
-        QTextStream in(&outfile);
-        in << m_json;
-
+        QByteArray outJson = m_json.toUtf8();
+        int writeCount = outfile.write(outJson);
+        outfile.flush();
+        LOG_DEBUG("writeCount:(%d)",writeCount);
         outfile.close();
     }
+    LOG_DEBUG("m_json:(%s)", qUtf8Printable(m_json));
 }
 
 
@@ -570,6 +579,8 @@ QString SQL_RECORD::get_record_oracle_180416(QString sql)
 
 QString SQL_RECORD::get_record_mysql(QString sql)
 {
+    LOG_DEBUG("sql:(%s)",qUtf8Printable(sql));
+
     QSqlQuery query(m_db);
     QString exe_cmd = sql;
 
@@ -578,6 +589,8 @@ QString SQL_RECORD::get_record_mysql(QString sql)
     QJsonObject json;
 
     query.exec(exe_cmd);
+
+    LOG_DEBUG();
 
     if( query.isActive() )
     {
@@ -665,6 +678,8 @@ QString SQL_RECORD::get_record_mysql(QString sql)
     document.setObject(json);
     //QByteArray byteArray = document.toJson(QJsonDocument::Compact);
     m_json = document.toJson(QJsonDocument::Indented);
+
+
     return m_json;
 }
 
