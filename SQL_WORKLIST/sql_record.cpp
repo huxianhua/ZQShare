@@ -37,11 +37,17 @@ SQL_RECORD::SQL_RECORD(QObject *parent) : QObject(parent)
 
     emit this->operate("");
 
+    m_json = get_record_400();
+
 }
 void SQL_RECORD::handleResults(const QByteArray &results)
 {
     LOG_DEBUG("result: (%s)",results.data());
     m_newJsonResult = results;
+    if(isValid())
+    {
+        m_json = m_newJsonResult;
+    }
 }
 
 
@@ -67,13 +73,7 @@ QByteArray SQL_RECORD::get_record_400()
 
 QByteArray SQL_RECORD::get_record_json()
 {
-    if(!isValid())
-    {
-        return get_record_400();
-    }else
-    {
-        return m_newJsonResult;
-    }
+    return m_json;
 }
 QByteArray SQL_RECORD::get_record_demo()
 {

@@ -42,7 +42,7 @@ public:
 public slots:
 
 private:
-     QString m_json;
+     QByteArray m_json;
 
      QByteArray m_newJsonResult;
      QString m_bufferJson;
