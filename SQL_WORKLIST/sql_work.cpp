@@ -111,7 +111,8 @@ void SQL_WORK::printCofnig()
 {
     QString log;
 
-    log = QString("hostname: %1 port:%2 sid:%3 user:%4 password:%5 sql:(%6)")
+    log = QString("driverName:(%1) hostname: %1 port:%2 sid:%3 user:%4 password:%5 sql:(%6)")
+            .arg(m_driverName)
             .arg(m_hostname)
             .arg(m_port)
             .arg(m_sid)

@@ -18,7 +18,8 @@
 #if 0
 #define SQLWORKCOFIG        "./config/mysql.ini"
 #else
-#define SQLWORKCOFIG        "/Users/huxianhua/develop/git/ZQShare/SQL_WORKLIST/config/mysql.ini"
+//#define SQLWORKCOFIG        "/Users/huxianhua/develop/git/ZQShare/SQL_WORKLIST/config/mysql.ini"
+#define SQLWORKCOFIG          "D:/Git/ZQShare/SQL_WORKLIST/config/mysql.ini"
 #endif
 
 
