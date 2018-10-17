@@ -6,6 +6,10 @@
 #include <QSettings>
 #include <QSqlDatabase>
 
+#ifndef  nullptr
+#define nullptr 0
+#endif
+
 class SQL_RECORD : public QObject
 {
     Q_OBJECT

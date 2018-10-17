@@ -20,3 +20,6 @@ SOURCES += main.cpp config.h \
 
 HEADERS += \
     sql_record.h
+
+DISTFILES += \
+    config.ini
