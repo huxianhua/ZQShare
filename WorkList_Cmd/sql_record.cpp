@@ -40,7 +40,7 @@ QString SQL_RECORD::runSQL()
         m_settings= new QSettings (this->m_config_filename,QSettings::IniFormat);
 
         m_settings->beginGroup("SYSTINFO");
-        m_driverName = m_settings->value("driverName").toString();
+        m_driverName = m_settings->value("driverName").toString().trimmed();
         m_settings->endGroup();
 
         QString hostname;
@@ -50,21 +50,40 @@ QString SQL_RECORD::runSQL()
         QString password;
         QString sql;
 
-        if(0 == m_driverName.compare("QOCI",Qt::CaseInsensitive))
+        QStringList driverList;
+
+        driverList << "QOCI" << "QMYSQL" << "QODBC";
+
+        int listCount = driverList.length();
+
+        bool isFind = false;
+
+        for(int index = 0; index < listCount; index++)
         {
-            m_settings->beginGroup("oracle");
-            //oracle 设置项
-            hostname = m_settings->value("hostname_oracle","192.168.0.163").toString();
-            port = m_settings->value("port_oracle","1521").toInt();
-            sid = m_settings->value("sid_oracle","xe").toString();
-            user = m_settings->value("user_oracle","system").toString();
-            password = m_settings->value("password_oracle","oracle").toString();
-            sql = m_settings->value("defual_sql_oracle","select * from V_TJ_XDT where rownum < 100").toString();
-            m_settings->endGroup();
-        }else
-        {
-            LOG_FATAL("请检查 %s 类型是否支持",qUtf8Printable(m_driverName));
+            if(0 == driverList.at(index).compare(m_driverName,Qt::CaseInsensitive))
+            {
+                isFind = true;
+                break;
+            }
         }
+
+        if(!isFind)
+        {
+               LOG_FATAL("请检查 %s 类型是否支持",qUtf8Printable(m_driverName));
+        }
+
+        m_settings->beginGroup("Database");
+
+        hostname = m_settings->value("hostname","192.168.0.163").toString();
+        port = m_settings->value("port","1521").toInt();
+        sid = m_settings->value("sid","xe").toString();
+        user = m_settings->value("user","system").toString();
+        password = m_settings->value("password","oracle").toString();
+        sql = m_settings->value("defual_sql_oracle","select * from V_TJ_XDT where rownum < 100").toString();
+
+
+        m_settings->endGroup();
+
 
         m_db = QSqlDatabase::addDatabase(m_driverName);
         m_db.setHostName(hostname);
@@ -77,6 +96,16 @@ QString SQL_RECORD::runSQL()
 
         if(ok)
         {
+            if(0 == m_driverName.compare("QMYSQL",Qt::CaseInsensitive))
+            {
+                QSqlQuery query(this->m_db);
+                QString exe_cmd = QString("use %1;").arg(sql);
+                if(!query.exec(exe_cmd) )
+                {
+                    LOG_FATAL("警告-mysql  执行 use %s; 异常!",sql.toUtf8().data());
+                }
+
+            }
             json = get_select_json(sql);
             m_json = json;
         }
@@ -99,6 +128,11 @@ QString SQL_RECORD::get_select_json(QString sql)
         json = get_record_oracle_180416(sql);
 
     }else
+    if(0 == m_driverName.compare("QMYSQL",Qt::CaseInsensitive))
+    {
+        json = get_record_mysql(sql);
+    }
+    else
     {
         LOG_FATAL("请检查 %s 类型是否支持",qUtf8Printable(m_driverName));
     }
@@ -514,7 +548,105 @@ QString SQL_RECORD::get_record_oracle_180416(QString sql)
     return m_json;
 }
 
+QString SQL_RECORD::get_record_mysql(QString sql)
+{
+    QSqlQuery query(m_db);
+    QString exe_cmd = sql;
 
+    QJsonDocument document;
+    // 构建 Json 对象
+    QJsonObject json;
+
+    query.exec(exe_cmd);
+
+    if( query.isActive() )
+    {
+        //设置字段名
+        QSqlRecord record = query.record();
+        int field_count = record.count();
+
+        QStringList header_lables;
+
+        int index = 0;
+
+        while(index < field_count)
+        {
+            header_lables.append(record.fieldName(index));
+            index++;
+        }
+
+        //取得查询的条数
+        int numRows = 0;
+        if (m_db.driver()->hasFeature(QSqlDriver::QuerySize)) {
+             numRows = query.size();
+         } else {
+             // this can be very slow
+             if(query.last())
+             {
+                 numRows = query.at();
+                 numRows = (numRows < 0) ? 0 : numRows + 1;
+                 query.first();
+             }
+         }
+
+        QJsonArray pa;
+
+        // 设置表内容
+        if(numRows > 0)
+        {
+            int row = 0;
+            int column = 0;
+            while (query.next()){
+                QJsonObject po;
+
+                column = 0;
+                while(column < field_count)
+                {
+                    QString str = query.value(column).toString();
+                    QString head_str = header_lables.at(column);
+                    if(0 == head_str.compare("Gender",Qt::CaseInsensitive))
+                    {
+                        if(0 == str.compare("男"))
+                        {
+                            str = "M";
+                        }else
+                        if(0 == str.compare("女"))
+                        {
+                            str = "F";
+                        }else
+                        {
+                            str = "O";
+                        }
+                    }
+                    po.insert(header_lables.at(column),str);
+
+                    column++;
+                }
+
+                pa.append(po);
+                row++;
+            }
+        }
+        json.insert("rec", "200");
+        json.insert("worklist", QJsonValue(pa));
+        json.insert("producer","PC-LinkHIS");
+        json.insert("datetime",getDateTimeStamp());
+    }else
+    {
+        QJsonArray pa;
+
+        json.insert("rec", "400");
+        json.insert("worklist", QJsonValue(pa));
+        json.insert("producer","PC-LinkHIS");
+        json.insert("datetime",getDateTimeStamp());
+    }
+    query.clear();
+
+    document.setObject(json);
+    //QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    m_json = document.toJson(QJsonDocument::Indented);
+    return m_json;
+}
 
 
 QString SQL_RECORD::get_record_demo()

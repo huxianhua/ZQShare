@@ -67,6 +67,8 @@ private:
     QString get_record_oracle(QString sql);
     QString get_record_oracle_180416(QString sql);
 
+    QString get_record_mysql(QString sql);
+
 
 };
 
