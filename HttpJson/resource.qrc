@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/help"/>
+    <qresource prefix="/">
+        <file>images/logo.ico</file>
+        <file>images/background.png</file>
+        <file>images/close.png</file>
+        <file>images/close_hover.png</file>
+        <file>images/close_pressed.png</file>
+        <file>images/sql_0.png</file>
+        <file>images/sql_1.png</file>
+        <file>images/sql_2.png</file>
+        <file>images/mysql.jpg</file>
+        <file>images/oracle.jpg</file>
+        <file>images/sqlserver.jpg</file>
+        <file>images/worklist.jpg</file>
+        <file>images/help.jpg</file>
+    </qresource>
+</RCC>
