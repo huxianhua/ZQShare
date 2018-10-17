@@ -18,6 +18,8 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <QSqlError>
+
 
 SQL_RECORD::SQL_RECORD(QObject *parent) : QObject (parent)
 {
@@ -79,10 +81,22 @@ QString SQL_RECORD::runSQL()
         sid = m_settings->value("sid","xe").toString();
         user = m_settings->value("user","system").toString();
         password = m_settings->value("password","oracle").toString();
-        sql = m_settings->value("defual_sql_oracle","select * from V_TJ_XDT where rownum < 100").toString();
-
+        sql = m_settings->value("sql").toString();
 
         m_settings->endGroup();
+
+        QString log;
+
+        log = QString("hostname: %1 port:%2 sid:%3 user:%4 password:%5 sql:(%6)")
+                .arg(hostname)
+                .arg(port)
+                .arg(sid)
+                .arg(user)
+                .arg(password)
+                .arg(sql);
+
+
+        LOG_DEBUG("log:%s",qUtf8Printable(log));
 
 
         m_db = QSqlDatabase::addDatabase(m_driverName);
@@ -96,6 +110,7 @@ QString SQL_RECORD::runSQL()
 
         if(ok)
         {
+            LOG_DEBUG("%s is open",qUtf8Printable(m_driverName));
             if(0 == m_driverName.compare("QMYSQL",Qt::CaseInsensitive))
             {
                 QSqlQuery query(this->m_db);
@@ -108,6 +123,11 @@ QString SQL_RECORD::runSQL()
             }
             json = get_select_json(sql);
             m_json = json;
+        }else
+        {
+            //QSqlError error = m_db.lastError();
+
+            LOG_DEBUG("%s is no open",qUtf8Printable(m_driverName),qUtf8Printable(m_db.lastError().text()));
         }
     }
     return json;

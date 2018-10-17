@@ -22,4 +22,7 @@ HEADERS += \
     sql_record.h
 
 DISTFILES += \
-    config.ini
+    config.ini \
+    mysql.ini \
+    oracle.ini \
+    sqlserver.ini
