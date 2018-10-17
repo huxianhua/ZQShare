@@ -143,6 +143,11 @@ void SQL_RECORD::removeDatabase()
 
         QSqlDatabase::removeDatabase(connection);
 
+
+        if(m_settings)
+        {
+            m_settings->deleteLater();
+        }
 }
 
 
