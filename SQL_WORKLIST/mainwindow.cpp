@@ -382,17 +382,17 @@ QString MainWindow::get_select_json()
 
     if(0 == m_driverName.compare("QMYSQL",Qt::CaseInsensitive))
     {
-        json = SQL_RECORD::instance()->get_record_mysql(this->m_db,ui->tedit_sql->toPlainText());
+        //json = SQL_RECORD::instance()->get_record_mysql(this->m_db,ui->tedit_sql->toPlainText());
 
     }else
     if(0 == m_driverName.compare("QOCI",Qt::CaseInsensitive))
     {
-        json = SQL_RECORD::instance()->get_record_oracle_180416(this->m_db,ui->tedit_sql->toPlainText());
+        //json = SQL_RECORD::instance()->get_record_oracle_180416(this->m_db,ui->tedit_sql->toPlainText());
 //        json = SQL_RECORD::instance()->get_record_oracle(this->m_db,ui->tedit_sql->toPlainText());
     }else
     if(0 == m_driverName.compare("QODBC",Qt::CaseInsensitive))
     {
-        json = SQL_RECORD::instance()->get_record_sqlserver(this->m_db,ui->tedit_sql->toPlainText());
+        //json = SQL_RECORD::instance()->get_record_sqlserver(this->m_db,ui->tedit_sql->toPlainText());
     }else
     {
         QMessageBox::information(this, tr("警告"),
@@ -475,8 +475,7 @@ void MainWindow::s_tabbarClicked(int index)
     LOG_DEBUG("index:(%d)",index);
 
 
-    //if(index == 1)
-    if(false)
+    if(index == 1 || SETTING_LOCK)
     {
 
         bool isok;
@@ -484,10 +483,10 @@ void MainWindow::s_tabbarClicked(int index)
 
         if(isok)
         {
-
             if(text.compare("pw") == 0 || text.compare(PASSWORD) == 0)
             {
                 m_tabwidCurrentIndex = index;
+                LOG_DEBUG("密码正确！");
             }else
             {
                 QMessageBox::warning(this,"警告","密码错误",QMessageBox::Ok);

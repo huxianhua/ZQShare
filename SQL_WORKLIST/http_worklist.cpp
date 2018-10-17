@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QList>
 #include <QPair>
+#include "sql_record.h"
 
 #include "mainwindow.h"
 
@@ -99,9 +100,9 @@ void HTTP_WORKLIST::out_json(QtHttpRequest * request, QtHttpReply * reply)
     qDebug () << "QtHttpServer client request :" << request;
 
     reply->addHeader("Content-type","text/html;charset=utf-8");
-    QString json = MainWindow::instance()->get_select_json();
+    QByteArray json = SQL_RECORD::instance()->get_record_json();
 
-    reply->appendRawData(json.toUtf8());
+    reply->appendRawData(json);
 
 
 
@@ -111,14 +112,10 @@ void HTTP_WORKLIST::out_demo(QtHttpRequest * request, QtHttpReply * reply)
     qDebug () << "QtHttpServer client request :" << request;
 
     reply->addHeader("Content-type","text/html;charset=utf-8");
-    QString json = MainWindow::instance()->get_json_demo();
-    reply->appendRawData(json.toUtf8());
+    QByteArray json = SQL_RECORD::instance()->get_record_demo();
+
+    reply->appendRawData(json);
 }
-
-
-
-
-
 
 void HTTP_WORKLIST::out_default(QtHttpRequest * request, QtHttpReply * reply)
 {

@@ -12,7 +12,16 @@
 #define VERSION  "V0.0.3"
 
 
-#define PASSWORD QString("%1_%2").arg(COMPANY).arg(VERSION)
+#define SETTING_LOCK         true
+#define PASSWORD            QString("%1_%2").arg(COMPANY).arg(VERSION)
+
+#if 0
+#define SQLWORKCOFIG        "./config/mysql.ini"
+#else
+#define SQLWORKCOFIG        "/Users/huxianhua/develop/git/ZQShare/SQL_WORKLIST/config/mysql.ini"
+#endif
+
+
 
 #endif // CONFIG_H
 

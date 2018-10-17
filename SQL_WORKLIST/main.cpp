@@ -31,6 +31,8 @@
 
 #include "QSingleApplication.h"
 
+#include "sql_record.h"
+
 //#if _MSC_VER >= 1600
 //#pragma execution_character_set("utf-8")    dddxxx
 //#endif
@@ -159,10 +161,10 @@ int main(int argc, char *argv[])
 
     //http 服务
     HTTP_WORKLIST *wl_server = new HTTP_WORKLIST (qApp);
-
-
     QObject::connect(w,SIGNAL(sig_start(int)),wl_server,SLOT(s_start(int)));
     QObject::connect(w,SIGNAL(sig_stop()),wl_server,SLOT(s_stop()));
+
+    SQL_RECORD::instance();
 
 
     int rc = a.exec();

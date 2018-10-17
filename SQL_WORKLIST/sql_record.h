@@ -6,6 +6,9 @@
 #include <QSqlDatabase>
 #include <QThread>
 
+#include <QSettings>
+#include <QProcess>
+
 class SQL_RECORD : public QObject
 {
     Q_OBJECT
@@ -21,38 +24,43 @@ public:
            return instance;
       }
 
-    void set_db(QSqlDatabase &db,QString sql){
-        m_db = db;
-        m_sql = sql;
+    ~SQL_RECORD(){
+        workerThread.quit();
+        workerThread.wait();
     }
 
-    QString get_record_oracle(QSqlDatabase db,QString sql);
-    QString get_record_mysql(QSqlDatabase db,QString sql);
-    QString get_record_sqlserver(QSqlDatabase db,QString sql);
+    /**
+     * @brief isValid 判定查询结果是否是有效的
+     * @return
+     */
+    bool isValid();
 
-    QString get_record_demo();
+    QByteArray get_record_400();
+    QByteArray get_record_json();
+    QByteArray get_record_demo();
 
-    //QSqlDatabase m_db;
-    void parse_age_string(QString age_str, QString &age_number, QString &age_unit);
-    int Age_to_Day(QString value);
-    void HIS_Result_Age(QString value, QString &age, QString &age_unit);
-    QString get_record_oracle_180416(QSqlDatabase db, QString sql);
+public slots:
+
 private:
      QString m_json;
 
+     QByteArray m_newJsonResult;
+     QString m_bufferJson;
+     QThread workerThread;
+
+
      QString getDateTimeStamp();
 
-     QSqlDatabase m_db;
-     QString m_sql;
-
-     QThread *m_workThread;
-     QString m_bufferJson;
-
-
 signals:
+    void sig_result();
+
 
 public slots:
-     void s_select();
+      void handleResults(const QByteArray &);
+signals:
+      void operate(const QString &);
+
+
 };
 
 #endif // SQL_RECORD_H
