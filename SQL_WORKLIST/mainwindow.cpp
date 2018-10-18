@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->m_app_version = "0.0.2";
+    this->m_app_version = VERSION;
     this->m_config_filename = QString("%1/%2-%3.ini")
             .arg(qApp->applicationDirPath())
             .arg(qApp->applicationName())
@@ -474,28 +474,33 @@ void MainWindow::s_tabbarClicked(int index)
     qDebug("");
     LOG_DEBUG("index:(%d)",index);
 
-
-    if(index == 1 || SETTING_LOCK)
+    if(SETTING_LOCK)
     {
-
-        bool isok;
-        QString text = QInputDialog::getText(this,"设置修改","请输入密码",QLineEdit::Password,"",&isok);
-
-        if(isok)
+        if(index == 1)
         {
-            if(text.compare("pw") == 0 || text.compare(PASSWORD) == 0)
+
+            bool isok;
+            QString text = QInputDialog::getText(this,"设置修改","请输入密码",QLineEdit::Password,"",&isok);
+
+            if(isok)
             {
-                m_tabwidCurrentIndex = index;
-                LOG_DEBUG("密码正确！");
+                if(text.compare("pw") == 0 || text.compare(PASSWORD) == 0)
+                {
+                    m_tabwidCurrentIndex = index;
+                    LOG_DEBUG("密码正确！");
+                }else
+                {
+                    QMessageBox::warning(this,"警告","密码错误",QMessageBox::Ok);
+                }
+
             }else
             {
-                QMessageBox::warning(this,"警告","密码错误",QMessageBox::Ok);
-            }
+                QMessageBox::warning(this,"警告","如要修改请联系维护人员-huxianhua@zoncare.cn",QMessageBox::Ok);
 
+            }
         }else
         {
-            QMessageBox::warning(this,"警告","如要修改请联系维护人员-huxianhua@zoncare.cn",QMessageBox::Ok);
-
+            m_tabwidCurrentIndex = index;
         }
     }else
     {

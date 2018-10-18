@@ -7,7 +7,7 @@
 QT       += core gui network sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = SQL_WORKLIST
+TARGET = SQL_WORKLIST_V1.0
 TEMPLATE = app
 
 

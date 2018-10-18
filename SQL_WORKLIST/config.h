@@ -9,13 +9,13 @@
 #define LOG_FATAL(format,...)    qFatal("[%s - %s - %d]\t"#format,__FILE__,__FUNCTION__,__LINE__,##__VA_ARGS__)
 
 #define COMPANY  "zoncare"
-#define VERSION  "V0.0.3"
+#define VERSION  "V1.0"
 
 
-#define SETTING_LOCK         true
+#define SETTING_LOCK         false
 #define PASSWORD            QString("%1_%2").arg(COMPANY).arg(VERSION)
 
-#if 0
+#if 1
 #define SQLWORKCOFIG        "./config/mysql.ini"
 #else
 //#define SQLWORKCOFIG        "/Users/huxianhua/develop/git/ZQShare/SQL_WORKLIST/config/mysql.ini"
